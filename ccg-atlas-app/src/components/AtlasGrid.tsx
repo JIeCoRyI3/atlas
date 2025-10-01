@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Card, PlacedCard, Position } from '../types';
 import { calculateCardValues } from '../utils/calculations';
 import './AtlasGrid.css';
@@ -7,10 +6,11 @@ interface AtlasGridProps {
   placedCards: PlacedCard[];
   onPlaceCard: (placedCard: PlacedCard) => void;
   onRemoveCard: (position: Position) => void;
+  draggedCard: Card | null;
+  onDragStart: (card: Card) => void;
 }
 
-export function AtlasGrid({ placedCards, onPlaceCard, onRemoveCard }: AtlasGridProps) {
-  const [draggedCard, setDraggedCard] = useState<Card | null>(null);
+export function AtlasGrid({ placedCards, onPlaceCard, onRemoveCard, draggedCard, onDragStart }: AtlasGridProps) {
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -43,15 +43,10 @@ export function AtlasGrid({ placedCards, onPlaceCard, onRemoveCard }: AtlasGridP
     };
 
     onPlaceCard(placedCard);
-    setDraggedCard(null);
   };
 
   const getCardAtPosition = (x: number, y: number): PlacedCard | undefined => {
     return placedCards.find(pc => pc.position.x === x && pc.position.y === y);
-  };
-
-  const handleCardDragStart = (card: Card) => {
-    setDraggedCard(card);
   };
 
   // Генерируем сетку 8x8
@@ -59,12 +54,11 @@ export function AtlasGrid({ placedCards, onPlaceCard, onRemoveCard }: AtlasGridP
   for (let y = -4; y <= 3; y++) {
     for (let x = -4; x <= 3; x++) {
       const placedCard = getCardAtPosition(x, y);
-      const isCenter = x === 0 || y === 0;
       
       grid.push(
         <div
           key={`${x},${y}`}
-          className={`grid-cell ${isCenter ? 'center-cell' : ''} ${placedCard ? 'has-card' : ''}`}
+          className={`grid-cell ${placedCard ? 'has-card' : ''}`}
           onDragOver={handleDragOver}
           onDrop={(e) => handleDrop(e, x, y)}
           data-x={x}
@@ -74,7 +68,7 @@ export function AtlasGrid({ placedCards, onPlaceCard, onRemoveCard }: AtlasGridP
             <div
               className="placed-card"
               draggable
-              onDragStart={() => handleCardDragStart(placedCard.card)}
+              onDragStart={() => onDragStart(placedCard.card)}
               onDoubleClick={() => {
                 if (confirm(`Удалить карту "${placedCard.card.name}"?`)) {
                   onRemoveCard(placedCard.position);

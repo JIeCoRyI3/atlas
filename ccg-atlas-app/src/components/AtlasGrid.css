@@ -55,7 +55,7 @@
 }
 
 .grid-cell {
-  background-color: var(--bg-primary);
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,16 +65,11 @@
 }
 
 .grid-cell:hover {
-  background-color: var(--bg-secondary);
-}
-
-.grid-cell.center-cell {
-  background-color: rgba(79, 70, 229, 0.1);
-  border: 1px solid var(--primary-color);
+  background-color: #fafafa;
 }
 
 .grid-cell.has-card {
-  background-color: var(--secondary-color);
+  background-color: white;
 }
 
 .placed-card {

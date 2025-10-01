@@ -21,6 +21,15 @@ export function CardSelector({ cards, onDragStart }: CardSelectorProps) {
     );
   }
 
+  // Функция для генерации описания из ranges
+  const generateDescription = (card: Card): string => {
+    const parts: string[] = [];
+    card.ranges.forEach(range => {
+      parts.push(`[${getCharacteristicLabel(range.characteristic)}: ${range.minValue}-${range.maxValue}]`);
+    });
+    return parts.join(' ');
+  };
+
   return (
     <div className="card-selector">
       <h3 className="selector-title">Доступные карты</h3>
@@ -36,17 +45,8 @@ export function CardSelector({ cards, onDragStart }: CardSelectorProps) {
             onDragStart={() => onDragStart(card)}
           >
             <div className="selector-card-name">{card.name}</div>
-            <div className="selector-card-ranges">
-              {card.ranges.map((range) => (
-                <div key={range.id} className="selector-range">
-                  <span className="selector-range-label">
-                    {getCharacteristicLabel(range.characteristic)}
-                  </span>
-                  <span className="selector-range-value">
-                    {range.minValue}-{range.maxValue}
-                  </span>
-                </div>
-              ))}
+            <div className="selector-card-description">
+              {generateDescription(card)}
             </div>
           </div>
         ))}

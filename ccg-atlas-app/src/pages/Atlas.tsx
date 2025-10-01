@@ -11,6 +11,7 @@ interface AtlasProps {
 
 export function Atlas({ cards }: AtlasProps) {
   const [placedCards, setPlacedCards] = useState<PlacedCard[]>([]);
+  const [draggedCard, setDraggedCard] = useState<Card | null>(null);
 
   const handlePlaceCard = (placedCard: PlacedCard) => {
     // Удаляем карту с той же позиции, если она есть
@@ -51,7 +52,7 @@ export function Atlas({ cards }: AtlasProps) {
 
         <div className="atlas-layout">
           <div className="atlas-sidebar">
-            <CardSelector cards={cards} onDragStart={() => {}} />
+            <CardSelector cards={cards} onDragStart={setDraggedCard} />
           </div>
 
           <div className="atlas-main">
@@ -60,6 +61,8 @@ export function Atlas({ cards }: AtlasProps) {
                 placedCards={placedCards}
                 onPlaceCard={handlePlaceCard}
                 onRemoveCard={handleRemoveCard}
+                draggedCard={draggedCard}
+                onDragStart={setDraggedCard}
               />
             </div>
             <div className="atlas-info">

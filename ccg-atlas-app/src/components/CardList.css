@@ -30,29 +30,17 @@
   flex: 1;
 }
 
-.card-item-ranges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+.card-item-description {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
 }
 
-.range-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: var(--bg-secondary);
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.75rem;
-}
-
-.range-badge-label {
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
-.range-badge-value {
-  color: var(--text-secondary);
+.card-item-stats {
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
 }
 
 .empty-state {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CharacteristicRange, Characteristic } from '../types';
 import { getCharacteristicLabel } from '../utils/calculations';
 import './CardForm.css';
@@ -10,29 +10,17 @@ interface CardFormProps {
 
 export function CardForm({ onSave, initialCard }: CardFormProps) {
   const [name, setName] = useState(initialCard?.name || '');
-  const [ranges, setRanges] = useState<CharacteristicRange[]>(
-    initialCard?.ranges || []
-  );
-
-  const addRange = () => {
-    const newRange: CharacteristicRange = {
-      id: crypto.randomUUID(),
-      characteristic: 'quality',
-      minValue: 1,
-      maxValue: 8
-    };
-    setRanges([...ranges, newRange]);
-  };
-
-  const updateRange = (id: string, field: keyof CharacteristicRange, value: any) => {
-    setRanges(ranges.map(range =>
-      range.id === id ? { ...range, [field]: value } : range
-    ));
-  };
-
-  const removeRange = (id: string) => {
-    setRanges(ranges.filter(range => range.id !== id));
-  };
+  const [description, setDescription] = useState(() => {
+    if (initialCard) {
+      return generateDescriptionFromRanges(initialCard.ranges);
+    }
+    return '';
+  });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [showCharacteristicModal, setShowCharacteristicModal] = useState(false);
+  const [selectedCharacteristic, setSelectedCharacteristic] = useState<Characteristic>('quality');
+  const [minValue, setMinValue] = useState(1);
+  const [maxValue, setMaxValue] = useState(8);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,8 +28,12 @@ export function CardForm({ onSave, initialCard }: CardFormProps) {
       alert('Введите название карты');
       return;
     }
+
+    // Парсим характеристики из описания
+    const ranges = parseRangesFromDescription(description);
+    
     if (ranges.length === 0) {
-      alert('Добавьте хотя бы один диапазон характеристик');
+      alert('Добавьте хотя бы одну характеристику в описание');
       return;
     }
 
@@ -56,8 +48,32 @@ export function CardForm({ onSave, initialCard }: CardFormProps) {
     // Сброс формы только если это новая карта
     if (!initialCard) {
       setName('');
-      setRanges([]);
+      setDescription('');
     }
+  };
+
+  const handleAddCharacteristic = () => {
+    const characteristicText = `[${getCharacteristicLabel(selectedCharacteristic)}: ${minValue}-${maxValue}]`;
+    
+    if (textareaRef.current) {
+      const textarea = textareaRef.current;
+      const cursorPos = textarea.selectionStart;
+      const textBefore = description.substring(0, cursorPos);
+      const textAfter = description.substring(cursorPos);
+      
+      const newDescription = textBefore + characteristicText + textAfter;
+      setDescription(newDescription);
+      
+      // Устанавливаем курсор после вставленного текста
+      setTimeout(() => {
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = cursorPos + characteristicText.length;
+      }, 0);
+    } else {
+      setDescription(description + characteristicText);
+    }
+    
+    setShowCharacteristicModal(false);
   };
 
   const characteristics: Characteristic[] = ['quality', 'quantity', 'cost', 'power'];
@@ -80,86 +96,137 @@ export function CardForm({ onSave, initialCard }: CardFormProps) {
 
       <div className="form-section">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="section-title">Характеристики</h3>
+          <label className="label">Описание карты</label>
           <button
             type="button"
-            onClick={addRange}
+            onClick={() => setShowCharacteristicModal(true)}
             className="btn btn-secondary btn-small"
           >
-            + Добавить диапазон
+            + Добавить характеристику
           </button>
         </div>
 
-        {ranges.length === 0 && (
-          <p className="text-secondary text-small">
-            Нажмите "Добавить диапазон" для создания характеристики
-          </p>
-        )}
+        <textarea
+          ref={textareaRef}
+          className="textarea"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Введите описание карты. Нажмите 'Добавить характеристику' чтобы встроить характеристики в текст."
+          rows={10}
+        />
+        
+        <p className="text-secondary text-small mt-1">
+          Характеристики в описании отображаются в формате: [Название: мин-макс]
+        </p>
+      </div>
 
-        <div className="ranges-list">
-          {ranges.map((range, index) => (
-            <div key={range.id} className="range-item">
-              <div className="range-header">
-                <span className="range-number">#{index + 1}</span>
-                <button
-                  type="button"
-                  onClick={() => removeRange(range.id)}
-                  className="btn btn-danger btn-small"
-                >
-                  Удалить
-                </button>
+      {showCharacteristicModal && (
+        <div className="modal-overlay" onClick={() => setShowCharacteristicModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">Добавить характеристику</h3>
+            
+            <div className="form-group">
+              <label className="label">Характеристика</label>
+              <select
+                className="select"
+                value={selectedCharacteristic}
+                onChange={(e) => setSelectedCharacteristic(e.target.value as Characteristic)}
+              >
+                {characteristics.map(char => (
+                  <option key={char} value={char}>
+                    {getCharacteristicLabel(char)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label className="label">Мин. значение</label>
+                <input
+                  type="number"
+                  className="input"
+                  value={minValue}
+                  onChange={(e) => setMinValue(parseFloat(e.target.value))}
+                />
               </div>
 
-              <div className="range-fields">
-                <div className="form-group">
-                  <label className="label">Характеристика</label>
-                  <select
-                    className="select"
-                    value={range.characteristic}
-                    onChange={(e) =>
-                      updateRange(range.id, 'characteristic', e.target.value as Characteristic)
-                    }
-                  >
-                    {characteristics.map(char => (
-                      <option key={char} value={char}>
-                        {getCharacteristicLabel(char)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label className="label">Мин. значение</label>
-                  <input
-                    type="number"
-                    className="input"
-                    value={range.minValue}
-                    onChange={(e) =>
-                      updateRange(range.id, 'minValue', parseFloat(e.target.value))
-                    }
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="label">Макс. значение</label>
-                  <input
-                    type="number"
-                    className="input"
-                    value={range.maxValue}
-                    onChange={(e) =>
-                      updateRange(range.id, 'maxValue', parseFloat(e.target.value))
-                    }
-                  />
-                </div>
+              <div className="form-group">
+                <label className="label">Макс. значение</label>
+                <input
+                  type="number"
+                  className="input"
+                  value={maxValue}
+                  onChange={(e) => setMaxValue(parseFloat(e.target.value))}
+                />
               </div>
             </div>
-          ))}
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                onClick={() => setShowCharacteristicModal(false)}
+                className="btn btn-secondary"
+              >
+                Отмена
+              </button>
+              <button
+                type="button"
+                onClick={handleAddCharacteristic}
+                className="btn btn-primary"
+              >
+                Добавить
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
 
       <button type="submit" className="btn btn-primary submit-btn">
         {initialCard ? 'Сохранить изменения' : 'Создать карту'}
       </button>
     </form>
   );
+}
+
+// Функция для генерации описания из существующих ranges (для редактирования)
+function generateDescriptionFromRanges(ranges: CharacteristicRange[]): string {
+  return ranges.map(range => 
+    `[${getCharacteristicLabel(range.characteristic)}: ${range.minValue}-${range.maxValue}]`
+  ).join(' ');
+}
+
+// Функция для парсинга характеристик из описания
+function parseRangesFromDescription(description: string): CharacteristicRange[] {
+  const ranges: CharacteristicRange[] = [];
+  
+  // Регулярное выражение для поиска паттерна [Характеристика: мин-макс]
+  const pattern = /\[(Качество|Количество|Стоимость|Сила):\s*(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)\]/g;
+  
+  let match;
+  while ((match = pattern.exec(description)) !== null) {
+    const characteristicLabel = match[1];
+    const minValue = parseFloat(match[2]);
+    const maxValue = parseFloat(match[3]);
+    
+    // Преобразуем метку обратно в тип Characteristic
+    const characteristicMap: Record<string, Characteristic> = {
+      'Качество': 'quality',
+      'Количество': 'quantity',
+      'Стоимость': 'cost',
+      'Сила': 'power'
+    };
+    
+    const characteristic = characteristicMap[characteristicLabel];
+    if (characteristic) {
+      ranges.push({
+        id: crypto.randomUUID(),
+        characteristic,
+        minValue,
+        maxValue
+      });
+    }
+  }
+  
+  return ranges;
 }

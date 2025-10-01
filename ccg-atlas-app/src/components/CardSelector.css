@@ -48,29 +48,11 @@
   margin-bottom: 0.75rem;
 }
 
-.selector-card-ranges {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.selector-range {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.15);
-  padding: 0.375rem 0.75rem;
-  border-radius: 0.25rem;
+.selector-card-description {
   font-size: 0.875rem;
-}
-
-.selector-range-label {
-  font-weight: 500;
-}
-
-.selector-range-value {
-  font-weight: 600;
-  opacity: 0.9;
+  line-height: 1.5;
+  opacity: 0.95;
+  word-wrap: break-word;
 }
 
 .empty-selector {

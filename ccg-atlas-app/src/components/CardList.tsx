@@ -16,6 +16,15 @@ export function CardList({ cards, onDelete }: CardListProps) {
     );
   }
 
+  // Функция для генерации описания из ranges
+  const generateDescription = (card: Card): string => {
+    const parts: string[] = [];
+    card.ranges.forEach(range => {
+      parts.push(`[${getCharacteristicLabel(range.characteristic)}: ${range.minValue}-${range.maxValue}]`);
+    });
+    return parts.join(' ');
+  };
+
   return (
     <div className="card-list">
       {cards.map(card => (
@@ -34,17 +43,14 @@ export function CardList({ cards, onDelete }: CardListProps) {
             </button>
           </div>
           
-          <div className="card-item-ranges">
-            {card.ranges.map((range) => (
-              <div key={range.id} className="range-badge">
-                <span className="range-badge-label">
-                  {getCharacteristicLabel(range.characteristic)}
-                </span>
-                <span className="range-badge-value">
-                  {range.minValue} - {range.maxValue}
-                </span>
-              </div>
-            ))}
+          <div className="card-item-description">
+            {generateDescription(card)}
+          </div>
+
+          <div className="card-item-stats">
+            <span className="text-secondary text-small">
+              Характеристик: {card.ranges.length}
+            </span>
           </div>
         </div>
       ))}
