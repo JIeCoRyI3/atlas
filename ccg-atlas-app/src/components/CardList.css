@@ -1,0 +1,70 @@
+.card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.card-item {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.card-item:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color);
+}
+
+.card-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.card-item-title {
+  font-size: 1.125rem;
+  margin: 0;
+  flex: 1;
+}
+
+.card-item-ranges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.range-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--bg-secondary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+}
+
+.range-badge-label {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.range-badge-value {
+  color: var(--text-secondary);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  background-color: var(--bg-primary);
+  border: 1px dashed var(--border-color);
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .card-list {
+    grid-template-columns: 1fr;
+  }
+}
