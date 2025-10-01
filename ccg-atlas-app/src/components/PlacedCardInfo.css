@@ -49,10 +49,41 @@
   border-radius: 0.25rem;
 }
 
+.info-card-description {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem;
+  background-color: var(--bg-primary);
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.info-card-details {
+  margin-top: 0.75rem;
+}
+
+.info-card-summary {
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--bg-primary);
+  margin-bottom: 0.5rem;
+  user-select: none;
+}
+
+.info-card-summary:hover {
+  background-color: #f0f0f0;
+}
+
 .info-card-values {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding-left: 0.5rem;
 }
 
 .info-value {

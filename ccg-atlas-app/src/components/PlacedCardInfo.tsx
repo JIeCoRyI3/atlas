@@ -1,5 +1,5 @@
 import { PlacedCard } from '../types';
-import { getCharacteristicLabel } from '../utils/calculations';
+import { getCharacteristicLabel, getCharacteristicColor } from '../utils/calculations';
 import './PlacedCardInfo.css';
 
 interface PlacedCardInfoProps {
@@ -34,26 +34,38 @@ export function PlacedCardInfo({ placedCards }: PlacedCardInfoProps) {
               </span>
             </div>
             
-            <div className="info-card-values">
-              {placedCard.card.ranges.map((range, idx) => {
-                const key = `${range.characteristic}_${idx}`;
-                const value = placedCard.calculatedValues[key];
-                
-                return (
-                  <div key={key} className="info-value">
-                    <span className="info-value-label">
-                      {getCharacteristicLabel(range.characteristic)}
-                    </span>
-                    <span className="info-value-range">
-                      {range.minValue} - {range.maxValue}
-                    </span>
-                    <span className="info-value-result">
-                      → {value}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+            <div 
+              className="info-card-description"
+              dangerouslySetInnerHTML={{ __html: placedCard.calculatedDescription }}
+            />
+            
+            <details className="info-card-details">
+              <summary className="info-card-summary">Детали расчёта</summary>
+              <div className="info-card-values">
+                {placedCard.card.ranges.map((range, idx) => {
+                  const key = `${range.characteristic}_${idx}`;
+                  const value = placedCard.calculatedValues[key];
+                  const color = getCharacteristicColor(range.characteristic);
+                  
+                  return (
+                    <div key={key} className="info-value">
+                      <span className="info-value-label">
+                        {getCharacteristicLabel(range.characteristic)}
+                      </span>
+                      <span className="info-value-range">
+                        {range.minValue} - {range.maxValue}
+                      </span>
+                      <span 
+                        className="info-value-result"
+                        style={{ backgroundColor: color, color: 'white' }}
+                      >
+                        → {value}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </details>
           </div>
         ))}
       </div>

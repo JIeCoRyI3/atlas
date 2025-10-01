@@ -2,12 +2,12 @@ import { Position, Characteristic, CharacteristicRange, CalculatedValues } from 
 
 /**
  * Получить значение характеристики на основе позиции на атласе
- * Атлас 8x8, координаты от -4 до 3
+ * Атлас 8x8, координаты от -4 до 4 (без 0)
  * 
- * Quality: слева направо (x: -4 = 0, -3 = 1, ..., 3 = 7)
- * Quantity: справа налево (x: 3 = 0, 2 = 1, ..., -4 = 7)
- * Cost: сверху вниз (y: -4 = 0, -3 = 1, ..., 3 = 7)
- * Power: снизу вверх (y: 3 = 0, 2 = 1, ..., -4 = 7)
+ * Quality: слева направо (x: -4 = 0, -3 = 1, ..., -1 = 3, 1 = 4, ..., 4 = 7)
+ * Quantity: справа налево (x: 4 = 0, 3 = 1, ..., 1 = 3, -1 = 4, ..., -4 = 7)
+ * Cost: сверху вниз (y: -4 = 0, -3 = 1, ..., -1 = 3, 1 = 4, ..., 4 = 7)
+ * Power: снизу вверх (y: 4 = 0, 3 = 1, ..., 1 = 3, -1 = 4, ..., -4 = 7)
  */
 export function getCharacteristicValue(
   characteristic: Characteristic,
@@ -15,20 +15,20 @@ export function getCharacteristicValue(
 ): number {
   switch (characteristic) {
     case 'quality':
-      // Слева направо: -4 -> 0, -3 -> 1, ..., 3 -> 7
-      return position.x + 4;
+      // Слева направо: -4 -> 0, -3 -> 1, ..., -1 -> 3, 1 -> 4, ..., 4 -> 7
+      return position.x < 0 ? position.x + 4 : position.x + 3;
     
     case 'quantity':
-      // Справа налево: 3 -> 0, 2 -> 1, ..., -4 -> 7
-      return 3 - position.x;
+      // Справа налево: 4 -> 0, 3 -> 1, ..., 1 -> 3, -1 -> 4, ..., -4 -> 7
+      return position.x > 0 ? 4 - position.x : 3 - position.x;
     
     case 'cost':
-      // Сверху вниз: -4 -> 0, -3 -> 1, ..., 3 -> 7
-      return position.y + 4;
+      // Сверху вниз: -4 -> 0, -3 -> 1, ..., -1 -> 3, 1 -> 4, ..., 4 -> 7
+      return position.y < 0 ? position.y + 4 : position.y + 3;
     
     case 'power':
-      // Снизу вверх: 3 -> 0, 2 -> 1, ..., -4 -> 7
-      return 3 - position.y;
+      // Снизу вверх: 4 -> 0, 3 -> 1, ..., 1 -> 3, -1 -> 4, ..., -4 -> 7
+      return position.y > 0 ? 4 - position.y : 3 - position.y;
     
     default:
       return 0;
@@ -80,4 +80,44 @@ export function getCharacteristicLabel(characteristic: Characteristic): string {
     power: 'Сила'
   };
   return labels[characteristic];
+}
+
+/**
+ * Получить цвет для характеристики
+ */
+export function getCharacteristicColor(characteristic: Characteristic): string {
+  const colors: Record<Characteristic, string> = {
+    quality: '#22c55e',    // зеленый
+    quantity: '#a855f7',   // фиолетовый
+    cost: '#3b82f6',       // синий
+    power: '#ef4444'       // красный
+  };
+  return colors[characteristic];
+}
+
+/**
+ * Генерировать описание с конкретными рассчитанными значениями
+ */
+export function generateCalculatedDescription(
+  description: string,
+  ranges: CharacteristicRange[],
+  calculatedValues: CalculatedValues
+): string {
+  let result = description;
+  
+  ranges.forEach((range, index) => {
+    const key = `${range.characteristic}_${index}`;
+    const value = calculatedValues[key];
+    const color = getCharacteristicColor(range.characteristic);
+    
+    // Создаем паттерн для поиска [Характеристика: мин-макс]
+    const label = getCharacteristicLabel(range.characteristic);
+    const pattern = new RegExp(`\\[${label}:\\s*${range.minValue}\\s*-\\s*${range.maxValue}\\]`, 'g');
+    
+    // Заменяем на конкретное значение с цветом
+    const coloredValue = `<span style="color: ${color}; font-weight: 600;">${value}</span>`;
+    result = result.replace(pattern, coloredValue);
+  });
+  
+  return result;
 }

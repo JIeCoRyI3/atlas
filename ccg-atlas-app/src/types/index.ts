@@ -13,13 +13,14 @@ export interface CharacteristicRange {
 export interface Card {
   id: string;
   name: string;
+  description: string; // Полное описание с диапазонами
   ranges: CharacteristicRange[];
 }
 
 // Позиция на атласе
 export interface Position {
-  x: number; // от -4 до 3
-  y: number; // от -4 до 3
+  x: number; // от -4 до 4 (без 0)
+  y: number; // от -4 до 4 (без 0)
 }
 
 // Размещенная карта на атласе
@@ -27,6 +28,7 @@ export interface PlacedCard {
   card: Card;
   position: Position;
   calculatedValues: CalculatedValues;
+  calculatedDescription: string; // Описание с конкретными значениями
 }
 
 // Рассчитанные значения

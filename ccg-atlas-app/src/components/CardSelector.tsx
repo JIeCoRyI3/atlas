@@ -1,5 +1,4 @@
 import { Card } from '../types';
-import { getCharacteristicLabel } from '../utils/calculations';
 import './CardSelector.css';
 
 interface CardSelectorProps {
@@ -21,15 +20,6 @@ export function CardSelector({ cards, onDragStart }: CardSelectorProps) {
     );
   }
 
-  // Функция для генерации описания из ranges
-  const generateDescription = (card: Card): string => {
-    const parts: string[] = [];
-    card.ranges.forEach(range => {
-      parts.push(`[${getCharacteristicLabel(range.characteristic)}: ${range.minValue}-${range.maxValue}]`);
-    });
-    return parts.join(' ');
-  };
-
   return (
     <div className="card-selector">
       <h3 className="selector-title">Доступные карты</h3>
@@ -46,7 +36,7 @@ export function CardSelector({ cards, onDragStart }: CardSelectorProps) {
           >
             <div className="selector-card-name">{card.name}</div>
             <div className="selector-card-description">
-              {generateDescription(card)}
+              {card.description}
             </div>
           </div>
         ))}
