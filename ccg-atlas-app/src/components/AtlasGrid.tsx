@@ -110,8 +110,40 @@ export function AtlasGrid({ placedCards, onPlaceCard, onRemoveCard, draggedCard,
         <div className="label-left">Качество →</div>
         <div className="label-right">← Количество</div>
       </div>
-      <div className="atlas-grid">
-        {grid}
+      <div className="atlas-grid-wrapper">
+        <div className="atlas-grid">
+          {grid}
+        </div>
+        {/* Цветные стрелки для ориентации */}
+        <div className="atlas-arrows">
+          {/* Стрелка вправо - Качество (зеленый) */}
+          <div className="arrow arrow-horizontal arrow-quality">
+            <div className="arrow-line"></div>
+            <div className="arrow-head">→</div>
+            <div className="arrow-label">Качество</div>
+          </div>
+          
+          {/* Стрелка влево - Количество (фиолетовый) */}
+          <div className="arrow arrow-horizontal arrow-quantity">
+            <div className="arrow-head">←</div>
+            <div className="arrow-line"></div>
+            <div className="arrow-label">Количество</div>
+          </div>
+          
+          {/* Стрелка вниз - Стоимость (синий) */}
+          <div className="arrow arrow-vertical arrow-cost">
+            <div className="arrow-line"></div>
+            <div className="arrow-head">↓</div>
+            <div className="arrow-label">Стоимость</div>
+          </div>
+          
+          {/* Стрелка вверх - Сила (красный) */}
+          <div className="arrow arrow-vertical arrow-power">
+            <div className="arrow-head">↑</div>
+            <div className="arrow-line"></div>
+            <div className="arrow-label">Сила</div>
+          </div>
+        </div>
       </div>
     </div>
   );

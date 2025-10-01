@@ -83,6 +83,19 @@ export function getCharacteristicLabel(characteristic: Characteristic): string {
 }
 
 /**
+ * Получить цвет для характеристики
+ */
+export function getCharacteristicColor(characteristic: Characteristic): string {
+  const colors: Record<Characteristic, string> = {
+    quality: '#22c55e',    // зеленый
+    quantity: '#a855f7',   // фиолетовый
+    cost: '#3b82f6',       // синий
+    power: '#ef4444'       // красный
+  };
+  return colors[characteristic];
+}
+
+/**
  * Генерировать описание с конкретными рассчитанными значениями
  */
 export function generateCalculatedDescription(
@@ -95,13 +108,15 @@ export function generateCalculatedDescription(
   ranges.forEach((range, index) => {
     const key = `${range.characteristic}_${index}`;
     const value = calculatedValues[key];
+    const color = getCharacteristicColor(range.characteristic);
     
     // Создаем паттерн для поиска [Характеристика: мин-макс]
     const label = getCharacteristicLabel(range.characteristic);
     const pattern = new RegExp(`\\[${label}:\\s*${range.minValue}\\s*-\\s*${range.maxValue}\\]`, 'g');
     
-    // Заменяем на конкретное значение
-    result = result.replace(pattern, value.toString());
+    // Заменяем на конкретное значение с цветом
+    const coloredValue = `<span style="color: ${color}; font-weight: 600;">${value}</span>`;
+    result = result.replace(pattern, coloredValue);
   });
   
   return result;
