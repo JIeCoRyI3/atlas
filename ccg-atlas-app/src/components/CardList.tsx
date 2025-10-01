@@ -1,5 +1,4 @@
 import { Card } from '../types';
-import { getCharacteristicLabel } from '../utils/calculations';
 import './CardList.css';
 
 interface CardListProps {
@@ -15,15 +14,6 @@ export function CardList({ cards, onDelete }: CardListProps) {
       </div>
     );
   }
-
-  // Функция для генерации описания из ranges
-  const generateDescription = (card: Card): string => {
-    const parts: string[] = [];
-    card.ranges.forEach(range => {
-      parts.push(`[${getCharacteristicLabel(range.characteristic)}: ${range.minValue}-${range.maxValue}]`);
-    });
-    return parts.join(' ');
-  };
 
   return (
     <div className="card-list">
@@ -44,7 +34,7 @@ export function CardList({ cards, onDelete }: CardListProps) {
           </div>
           
           <div className="card-item-description">
-            {generateDescription(card)}
+            {card.description}
           </div>
 
           <div className="card-item-stats">

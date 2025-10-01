@@ -40,6 +40,7 @@ export function CardForm({ onSave, initialCard }: CardFormProps) {
     const card: Card = {
       id: initialCard?.id || crypto.randomUUID(),
       name: name.trim(),
+      description: description.trim(),
       ranges
     };
 

@@ -4,6 +4,7 @@ import { Navigation } from './components/Navigation';
 import { Collection } from './pages/Collection';
 import { Atlas } from './pages/Atlas';
 import { Card } from './types';
+import { getCharacteristicLabel } from './utils/calculations';
 
 const STORAGE_KEY = 'ccg-atlas-cards';
 
@@ -11,7 +12,20 @@ function App() {
   const [cards, setCards] = useState<Card[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsedCards = JSON.parse(saved);
+        // Добавляем описание для старых карт, у которых его нет
+        return parsedCards.map((card: any) => {
+          if (!card.description && card.ranges) {
+            const description = card.ranges.map((range: any) => 
+              `[${getCharacteristicLabel(range.characteristic)}: ${range.minValue}-${range.maxValue}]`
+            ).join(' ');
+            return { ...card, description };
+          }
+          return card;
+        });
+      }
+      return [];
     } catch {
       return [];
     }
