@@ -1,0 +1,193 @@
+CCG ATLAS - PROJECT STRUCTURE
+==============================
+
+ccg-atlas-app/
+│
+├── 📄 Configuration Files
+│   ├── package.json           # Dependencies and scripts
+│   ├── package-lock.json      # Lock file for dependencies
+│   ├── tsconfig.json          # TypeScript configuration
+│   ├── tsconfig.node.json     # TypeScript config for Node
+│   ├── vite.config.ts         # Vite bundler configuration
+│   ├── .gitignore            # Git ignore rules
+│   └── index.html            # HTML entry point
+│
+├── 📚 Documentation
+│   ├── README.md             # Main documentation (detailed)
+│   ├── QUICK_START.md        # Quick start guide
+│   ├── GUIDE.md              # Complete user guide
+│   ├── PROJECT_SUMMARY.md    # Project summary
+│   └── STRUCTURE.txt         # This file
+│
+├── 📁 public/                # Static assets
+│   └── vite.svg              # Favicon
+│
+└── 📁 src/                   # Source code
+    │
+    ├── 🎯 Entry Points
+    │   ├── main.tsx          # Application entry
+    │   ├── App.tsx           # Main App component
+    │   └── vite-env.d.ts     # TypeScript declarations
+    │
+    ├── 📁 components/        # React components
+    │   ├── Navigation.tsx           # Navigation bar
+    │   ├── Navigation.css
+    │   ├── CardForm.tsx            # Card creation form
+    │   ├── CardForm.css
+    │   ├── CardList.tsx            # List of cards
+    │   ├── CardList.css
+    │   ├── AtlasGrid.tsx           # 8×8 grid component
+    │   ├── AtlasGrid.css
+    │   ├── CardSelector.tsx        # Card selection panel
+    │   ├── CardSelector.css
+    │   ├── PlacedCardInfo.tsx      # Placed cards info
+    │   └── PlacedCardInfo.css
+    │
+    ├── 📁 pages/             # Page components
+    │   ├── Collection.tsx           # Collection page
+    │   ├── Collection.css
+    │   ├── Atlas.tsx               # Atlas page
+    │   └── Atlas.css
+    │
+    ├── 📁 types/             # TypeScript types
+    │   └── index.ts                # Type definitions
+    │
+    ├── 📁 utils/             # Utility functions
+    │   └── calculations.ts         # Calculation logic
+    │
+    └── 📁 styles/            # Global styles
+        └── index.css               # Global CSS
+
+COMPONENT HIERARCHY
+===================
+
+App
+├── BrowserRouter
+│   ├── Navigation
+│   └── Routes
+│       ├── Collection
+│       │   ├── CardForm
+│       │   └── CardList
+│       │
+│       └── Atlas
+│           ├── CardSelector
+│           ├── AtlasGrid
+│           └── PlacedCardInfo
+
+KEY FEATURES BY FILE
+====================
+
+📄 types/index.ts
+   - Card, CharacteristicRange, Position
+   - PlacedCard, CalculatedValues
+   - AppState
+
+📄 utils/calculations.ts
+   - getCharacteristicValue()
+   - calculateRangeValue()
+   - calculateCardValues()
+   - getCharacteristicLabel()
+
+📄 components/CardForm.tsx
+   - Create/edit cards
+   - Add/remove characteristic ranges
+   - Form validation
+
+📄 components/CardList.tsx
+   - Display all cards
+   - Delete cards
+   - Show card details
+
+📄 components/AtlasGrid.tsx
+   - 8×8 grid rendering
+   - Drag & drop handling
+   - Card placement logic
+   - Visual feedback
+
+📄 components/CardSelector.tsx
+   - Display available cards
+   - Drag initiation
+   - Card preview
+
+📄 components/PlacedCardInfo.tsx
+   - Show placed cards
+   - Display calculated values
+   - Position information
+
+📄 pages/Collection.tsx
+   - Card management interface
+   - Two-column layout
+   - Form + List integration
+
+📄 pages/Atlas.tsx
+   - Three-column layout
+   - State management for placed cards
+   - Clear atlas functionality
+
+DATA FLOW
+=========
+
+1. User creates card in CardForm
+   ↓
+2. Card saved to App state (cards array)
+   ↓
+3. Card persisted to localStorage
+   ↓
+4. Card appears in CardList (Collection page)
+   ↓
+5. Card available in CardSelector (Atlas page)
+   ↓
+6. User drags card to AtlasGrid
+   ↓
+7. calculations.ts calculates values based on position
+   ↓
+8. PlacedCard created with calculated values
+   ↓
+9. PlacedCard displayed in AtlasGrid
+   ↓
+10. Details shown in PlacedCardInfo
+
+TECHNOLOGIES
+============
+
+- React 18.2          UI library
+- TypeScript 5.2      Type safety
+- Vite 5.0            Build tool
+- React Router 6.20   Routing
+- CSS3                Styling
+- HTML5 Drag & Drop   Interaction
+
+BUILD OUTPUT
+============
+
+dist/
+├── index.html
+└── assets/
+    ├── index-[hash].js   (~175 KB)
+    └── index-[hash].css  (~11 KB)
+
+SCRIPTS
+=======
+
+npm run dev       # Start development server (port 5173)
+npm run build     # Build for production
+npm run preview   # Preview production build
+npm run lint      # Run ESLint
+
+FILE SIZES
+==========
+
+TypeScript:  ~2,500 lines
+CSS:         ~800 lines
+Components:  10 files
+Pages:       2 files
+Total:       ~25 files (excluding node_modules)
+
+BROWSER STORAGE
+===============
+
+localStorage:
+  Key: 'ccg-atlas-cards'
+  Format: JSON array of Card objects
+  Size: ~1-5 KB per 100 cards
+  Persistence: Until manually cleared
